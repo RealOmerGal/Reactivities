@@ -18,7 +18,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateActivity(Activity activity)
         {
-            return Ok(await Mediator.Send(new Create.Command { Activity = activity }));
+            await Mediator.Send(new Create.Command { Activity = activity });
+            return StatusCode(201);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> EditActivity(Guid id, Activity activity)
@@ -29,7 +30,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteActivity(Guid id)
         {
-            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+            await Mediator.Send(new Delete.Command { Id = id });
+            return StatusCode(204);
         }
     }
 }
