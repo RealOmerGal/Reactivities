@@ -27,8 +27,8 @@ function ActivityDetails() {
     <Grid>
       <Grid.Column width="10">
         <ActivityDetailsHeader activity={activity} />
-        <ActivityDetailsChat />
         <ActivityDetailsInfo activity={activity} />
+        <ActivityDetailsChat />
       </Grid.Column>
       <Grid.Column width="6">
         <ActivityDetailsSideBar />
