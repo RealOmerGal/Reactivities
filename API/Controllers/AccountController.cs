@@ -27,7 +27,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return Unauthorized();
+            if (user == null) return BadRequest("Invalid email or password");
             user.EmailConfirmed = true; //TODO: Remove this
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
@@ -35,20 +35,22 @@ namespace API.Controllers
             {
                 return CreateUserObject(user);
             }
-            return Unauthorized();
+            return BadRequest();
         }
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email already exits");
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem(ModelState);
             }
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("Username already exits");
+                ModelState.AddModelError("username", "Username taken");
+                return ValidationProblem(ModelState);
             }
-            var user = new AppUser { DisplayName = registerDto.DisplayName, Email = registerDto.Email, UserName = registerDto.DisplayName };
+            var user = new AppUser { DisplayName = registerDto.DisplayName, Email = registerDto.Email, UserName = registerDto.Username };
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)

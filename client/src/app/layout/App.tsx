@@ -1,6 +1,6 @@
-import React, { createRef } from "react";
+import React, { createRef, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
-import { Container } from "semantic-ui-react";
+import { Container, Loader } from "semantic-ui-react";
 import Navbar from "./Navbar";
 import { observer } from "mobx-react-lite";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
@@ -11,6 +11,8 @@ import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
+import { useStore } from "../stores/store";
+import ModalContainer from "../modals/ModalContainer";
 
 export const historyRef = createRef();
 
@@ -19,10 +21,22 @@ function App() {
   const history = useHistory();
   //@ts-ignore
   historyRef.current = history;
+  const { commonStore, userStore } = useStore();
+
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded());
+    } else {
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore, userStore]);
+
+  if (!commonStore.appLoaded)
+    return <Loader content="Loading application..." />;
   return (
     <>
       <ToastContainer position="bottom-right" hideProgressBar />
-
+      <ModalContainer />
       <Route path="/" exact component={HomePage} />
       <Route
         path={"/(.+)"}
