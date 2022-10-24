@@ -13,6 +13,7 @@ import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
 import { useStore } from "../stores/store";
 import ModalContainer from "../modals/ModalContainer";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 export const historyRef = createRef();
 
@@ -46,6 +47,7 @@ function App() {
             <Container style={{ marginTop: "7em" }}>
               <Switch>
                 <Route exact path="/activities" component={ActivityDashboard} />
+                <Route path="/profiles/:username" component={ProfilePage} />
                 <Route path="/activities/:id" component={ActivityDetails} />
                 <Route
                   key={location.key}
