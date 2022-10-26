@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace API.Controllers
 {
@@ -50,6 +51,12 @@ namespace API.Controllers
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
                 ModelState.AddModelError("username", "Username taken");
+                return ValidationProblem(ModelState);
+            }
+            Regex rgx = new Regex(@"^[a-zA-Z0-9_]+$");
+            if (!rgx.IsMatch(registerDto.Username))
+            {
+                ModelState.AddModelError("username", "Username must be alphanumeric and not contain special characters");
                 return ValidationProblem(ModelState);
             }
             var user = new AppUser { DisplayName = registerDto.DisplayName, Email = registerDto.Email, UserName = registerDto.Username };

@@ -17,7 +17,7 @@ import { v4 as uuid } from "uuid";
 function ActivityForm() {
   const { activityStore } = useStore();
   const { createActivity, updateActivity } = activityStore;
-  const { loadActivity, loadingInitial } = activityStore;
+  const { loadActivity, loadingInitial, deselectActivity } = activityStore;
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const [activity, setActivity] = useState<ActivityFormValues>(
@@ -37,6 +37,9 @@ function ActivityForm() {
       loadActivity(id).then((activity) =>
         setActivity(new ActivityFormValues(activity))
       );
+    return () => {
+      deselectActivity();
+    };
   }, [id, loadActivity]);
 
   const handleFormSubmit = (activity: ActivityFormValues) => {

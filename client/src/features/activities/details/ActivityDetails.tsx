@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Button, Card, Grid, Image } from "semantic-ui-react";
+import { useParams } from "react-router-dom";
+import { Grid } from "semantic-ui-react";
 import Loading from "../../../app/layout/Loading";
 import { useStore } from "../../../app/stores/store";
 import ActivityDetailsChat from "./ActivityDetailsChat";
@@ -15,12 +15,16 @@ function ActivityDetails() {
     selectedActivity: activity,
     loadActivity,
     loadingInitial,
+    clearSelectedActivity,
   } = activityStore;
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     if (id) loadActivity(id);
-  }, [id, loadActivity]);
+    return () => {
+      clearSelectedActivity();
+    };
+  }, [id, loadActivity, clearSelectedActivity]);
 
   if (loadingInitial || !activity) return <Loading />;
   return (
@@ -28,7 +32,7 @@ function ActivityDetails() {
       <Grid.Column width="10">
         <ActivityDetailsHeader activity={activity} />
         <ActivityDetailsInfo activity={activity} />
-        <ActivityDetailsChat />
+        <ActivityDetailsChat activityId={activity.id} />
       </Grid.Column>
       <Grid.Column width="6">
         <ActivityDetailsSideBar activity={activity} />
