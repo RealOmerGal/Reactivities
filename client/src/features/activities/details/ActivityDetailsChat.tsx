@@ -15,6 +15,7 @@ export default observer(function ActivityDetailedChat({ activityId }: Props) {
   const { commentStore } = useStore();
 
   useEffect(() => {
+    console.log(activityId);
     if (activityId) {
       commentStore.createHubConnection(activityId);
     }
