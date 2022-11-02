@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Card, Icon, Image } from "semantic-ui-react";
 import { Profile } from "../../app/models/profile";
 import { truncate } from "../../utils/truncate";
+import FollowButton from "./FollowButton";
 
 interface Props {
   profile: Profile;
@@ -16,12 +17,12 @@ function ProfileCard({ profile }: Props) {
       <Card.Content>
         <Card.Header>{profile.displayName}</Card.Header>
         <Card.Description>{truncate(profile.bio)}</Card.Description>
-        <Card.Header>{profile.displayName}</Card.Header>
       </Card.Content>
       <Card.Content extra>
         <Icon name="user" />
-        20 followers
+        {profile.followersCount} followers
       </Card.Content>
+      <FollowButton profile={profile} />
     </Card>
   );
 }
