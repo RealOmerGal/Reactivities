@@ -2,7 +2,8 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { historyRef } from "../layout/App";
 import { Activity, ActivityFormValues } from "../models/activity";
-import { Photo, Profile } from "../models/profile";
+import { PaginatedResult } from "../models/pagination";
+import { Photo, Profile, UserActivity } from "../models/profile";
 import { User, UserFormValues } from "../models/user";
 import { store } from "../stores/store";
 
@@ -14,6 +15,11 @@ axios.interceptors.request.use(config => {
     return config
 })
 axios.interceptors.response.use(async response => {
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+        response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+        return response as AxiosResponse<PaginatedResult<any>>
+    }
     return response;
 }, (error: AxiosError<any>) => {
 
@@ -61,7 +67,7 @@ const requests = {
 }
 
 const Activities = {
-    list: () => requests.get<Activity[]>('/activities'),
+    list: (params: URLSearchParams) => axios.get<PaginatedResult<Activity[]>>('/activities', { params }).then(responseBody),
     details: (id: string) => requests.get<Activity>(`/activities/${id}`),
     create: (activity: ActivityFormValues) => requests.post<void>('/activities', activity),
     update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
@@ -78,20 +84,24 @@ const Account = {
 const Profiles = {
     get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
     uploadPhoto: (file: Blob) => {
-        const formData = new FormData();
+        let formData = new FormData();
         formData.append('File', file);
         return axios.post<Photo>('photos', formData, {
-            headers: { 'Contnet-type': 'multipart/form-data' }
+            headers: { 'Content-type': 'multipart/form-data' }
         })
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
     updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`,
         profile),
-    updateFollowing: (username: string) => requests.post(`/follow/${username}`, {}),
-    listFollowings: (username: string, predicate: string) => requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
+    updateFollowing: (username: string) => requests.post(`/follow/${username}`,
+        {}),
+    listFollowings: (username: string, predicate: string) =>
+        requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`),
+    listActivities: (username: string, predicate: string) =>
+        requests.get<UserActivity[]>(`/profiles/${username}/activities?
+   predicate=${predicate}`)
 }
-
 const agent = {
     Activities,
     Account,
