@@ -60,7 +60,7 @@ namespace API.Extensions
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins(url).AllowCredentials();
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins(url).AllowCredentials().WithExposedHeaders("WWW-Authenticate");
                 });
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
