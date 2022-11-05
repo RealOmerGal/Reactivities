@@ -53,11 +53,14 @@ namespace API.Extensions
                 // or from the environment variable from Heroku, use it to set up your DbContext.
                 options.UseNpgsql(connStr);
             });
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            string url = env == "Development" ? "http://localhost:3000" : "https://re-activities2.herokuapp.com/";
             services.AddCors(opt =>
+
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000").AllowCredentials();
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins(url).AllowCredentials().WithExposedHeaders("WWW-Authenticate");
                 });
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
