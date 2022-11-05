@@ -14,6 +14,7 @@ import ServerError from "../../features/errors/ServerError";
 import { useStore } from "../stores/store";
 import ModalContainer from "../modals/ModalContainer";
 import ProfilePage from "../../features/profiles/ProfilePage";
+import PrivateRoute from "./PrivateRoute";
 
 export const historyRef = createRef();
 
@@ -46,15 +47,24 @@ function App() {
             <Navbar />
             <Container style={{ marginTop: "7em" }}>
               <Switch>
-                <Route exact path="/activities" component={ActivityDashboard} />
-                <Route path="/profiles/:username" component={ProfilePage} />
-                <Route path="/activities/:id" component={ActivityDetails} />
-                <Route
+                <PrivateRoute
+                  exact
+                  path="/activities"
+                  component={ActivityDashboard}
+                />
+                <PrivateRoute
+                  path="/profiles/:username"
+                  component={ProfilePage}
+                />
+                <PrivateRoute
+                  path="/activities/:id"
+                  component={ActivityDetails}
+                />
+                <PrivateRoute
                   key={location.key}
                   path={["/createActivity", "/manage/:id"]}
                   component={ActivityForm}
                 />
-                <Route path="/server-error" component={ServerError} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

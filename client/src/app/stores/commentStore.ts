@@ -3,6 +3,9 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { ChatComment } from "../models/comment";
 import { store } from "./store";
 
+const url = import.meta.env.VITE_APP_CHAT_URL;
+
+
 export default class CommentStore {
     comments: ChatComment[] = [];
     hubConnection: HubConnection | null = null;
@@ -14,7 +17,7 @@ export default class CommentStore {
     createHubConnection = (activityId: string) => {
         if (store.activityStore.selectedActivity) {
             this.hubConnection = new HubConnectionBuilder()
-                .withUrl('http://localhost:5000/chat?activityId=' + activityId, {
+                .withUrl(url + '?activityId=' + activityId ?? 'http://localhost:5000/chat?activityId=' + activityId, {
                     accessTokenFactory: () => store.userStore.user?.token!
                 })
                 .withAutomaticReconnect()

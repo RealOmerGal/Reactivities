@@ -7,7 +7,6 @@ using Application.Core;
 using Application.Interfaces;
 using Infrastructure.Security;
 using Infrastructure.Photos;
-
 namespace API.Extensions
 {
     public static class ApplicationExtension
@@ -20,7 +19,7 @@ namespace API.Extensions
            });
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(opt =>
             {

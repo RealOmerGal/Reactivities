@@ -7,10 +7,12 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "./app/layout/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { store, StoreContext } from "./app/stores/store";
+import ScrollToTop from "./app/layout/ScrollToTop";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StoreContext.Provider value={store}>
     <BrowserRouter>
+      <ScrollToTop />
       <App />
     </BrowserRouter>
   </StoreContext.Provider>
